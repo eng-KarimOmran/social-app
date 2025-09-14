@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
-import { IUser, userModel } from "../../db/models/userModel.js";
-import { CustomError } from "../../utils/Error.js";
-import sendResponse from "../../utils/SendResponse.js";
+import { userModel } from "../../db/models/userModel";
+import { CustomError } from "../../utils/Error";
+import sendResponse from "../../utils/SendResponse";
 
 interface IUserServices {
   signup(req: Request, res: Response, next: NextFunction): Promise<Response>;

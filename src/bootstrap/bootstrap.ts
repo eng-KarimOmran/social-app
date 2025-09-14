@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 import path from "path";
 import baseRouter from "../routes";
 import globalErrorHandler from "../middlewares/globalErrorHandler";
-import { connectDB } from "../db/db.connect.js";
+import { connectDB } from "../db/db.connect";
 dotenv.config({ path: path.resolve("./src/config/.env") });
 const app = express();
 export const bootstrap = async () => {

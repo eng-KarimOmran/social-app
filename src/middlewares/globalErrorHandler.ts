@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ICustomError } from "../utils/Error.js";
+import { ICustomError } from "../utils/Error";
 
 const globalErrorHandler = (
   err: ICustomError,

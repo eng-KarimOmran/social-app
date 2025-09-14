@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UserServices from "./user.service";
-import validation from "../../middlewares/globalValidationHandler.js";
-import { signupSchema } from "./user.validation.js";
+import validation from "../../middlewares/globalValidationHandler";
+import { signupSchema } from "./user.validation";
 
 const userRouter = Router();
 const userServices = new UserServices();
