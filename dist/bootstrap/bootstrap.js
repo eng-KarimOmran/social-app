@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bootstrap = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
-const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
+dotenv_1.default.config({ path: path_1.default.resolve("./src/config/.env") });
+const express_1 = __importDefault(require("express"));
 const routes_1 = __importDefault(require("../routes"));
 const globalErrorHandler_1 = __importDefault(require("../middlewares/globalErrorHandler"));
 const db_connect_1 = require("../db/db.connect");
-dotenv_1.default.config({ path: path_1.default.resolve("./src/config/.env") });
 const app = (0, express_1.default)();
 const bootstrap = async () => {
     await (0, db_connect_1.connectDB)();

@@ -10,5 +10,6 @@ export const user = {
     .regex(/^01(0|1|2|5)[0-9]{8}$/, { message: "Invalid Egyptian number" })
     .trim(),
   password: z.string().min(8).max(16),
-  confirmPassword: z.string(),
 };
+
+export const otp = z.string().length(6);

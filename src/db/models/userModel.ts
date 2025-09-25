@@ -1,12 +1,14 @@
+import { Document } from "mongoose";
 import { model, Schema } from "mongoose";
 
-export interface IUser {
+export interface IUser extends Document {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   password: string;
-  confirmPassword: string;
+  emailConfirmed: boolean;
+  lastSensitiveUpdate: Date;
 }
 
 const userSchema = new Schema<IUser>(
@@ -26,11 +28,17 @@ const userSchema = new Schema<IUser>(
     },
     phone: {
       type: String,
-      required: true,
     },
     password: {
       type: String,
-      required: true,
+    },
+    emailConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+    lastSensitiveUpdate: {
+      type: Date,
+      default: new Date(Date.now()),
     },
   },
   {
@@ -38,4 +46,4 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-export const userModel = model<IUser>("user", userSchema);
+export const UserModel = model<IUser>("User", userSchema);

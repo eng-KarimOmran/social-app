@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_service_1 = __importDefault(require("./auth.service"));
+const globalValidationHandler_1 = __importDefault(require("../../middlewares/globalValidationHandler"));
+const auth_validation_1 = require("./auth.validation");
+const auth_middleware_1 = require("../../middlewares/auth.middleware");
+const token_1 = require("../../utils/token");
+const authRouter = (0, express_1.Router)();
+const authServices = new auth_service_1.default();
+authRouter.post("/signup", (0, globalValidationHandler_1.default)(auth_validation_1.signupSchema), authServices.signup);
+authRouter.patch("/confirm-email", (0, globalValidationHandler_1.default)(auth_validation_1.confirmEmailSchema), authServices.confirmEmail);
+authRouter.post("/resend-confirm-email-code", (0, globalValidationHandler_1.default)(auth_validation_1.resendConfirmEmailCode), authServices.resendConfirmEmailCode);
+authRouter.post("/login", (0, globalValidationHandler_1.default)(auth_validation_1.login), authServices.login);
+authRouter.post("/logout", (0, auth_middleware_1.auth)(token_1.TokenType.AccessToken), authServices.logout);
+authRouter.get("/refresh-token", (0, auth_middleware_1.auth)(token_1.TokenType.RefreshToken), authServices.refreshToken);
+authRouter.post("/forgot-password", (0, globalValidationHandler_1.default)(auth_validation_1.forgotPassword), authServices.forgotPassword);
+authRouter.post("/verify-password-reset-code", (0, globalValidationHandler_1.default)(auth_validation_1.verifyPasswordResetCode), authServices.verifyPasswordResetCode);
+authRouter.patch("/change-password", (0, globalValidationHandler_1.default)(auth_validation_1.changePassword), (0, auth_middleware_1.auth)(token_1.TokenType.PasswordToken), authServices.changePassword);
+exports.default = authRouter;

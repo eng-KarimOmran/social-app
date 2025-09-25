@@ -33,17 +33,24 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.otp = exports.user = void 0;
+exports.signupSchema = void 0;
 const z = __importStar(require("zod"));
-exports.user = {
-    firstName: z.string().min(2).max(15).trim(),
-    lastName: z.string().min(2).max(15).trim(),
-    email: z.email().trim(),
-    phone: z
-        .string()
-        .length(11)
-        .regex(/^01(0|1|2|5)[0-9]{8}$/, { message: "Invalid Egyptian number" })
-        .trim(),
-    password: z.string().min(8).max(16),
-};
-exports.otp = z.string().length(6);
+const globalValidationSchema_1 = require("../../utils/globalValidationSchema");
+exports.signupSchema = z
+    .object({
+    firstName: globalValidationSchema_1.user.firstName,
+    lastName: globalValidationSchema_1.user.lastName,
+    email: globalValidationSchema_1.user.email,
+    phone: globalValidationSchema_1.user.phone,
+    password: globalValidationSchema_1.user.password,
+    confirmPassword: globalValidationSchema_1.user.confirmPassword,
+})
+    .superRefine((args, ctx) => {
+    if (args.password != args.confirmPassword) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["confirmPassword"],
+            message: "Password must be equal to Confirm Password",
+        });
+    }
+});
