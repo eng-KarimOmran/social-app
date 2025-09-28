@@ -1,4 +1,28 @@
-export const errors = {
+type ErrorType = {
+  message: string;
+  statusCode: number;
+};
+
+interface Errors {
+  serverError: ErrorType;
+  invalidToken: ErrorType;
+  userNotFound: ErrorType;
+  userAlreadyExists: ErrorType;
+  emailAlreadyConfirmed: ErrorType;
+  codeNotRequested: ErrorType;
+  invalidCode: ErrorType;
+  expiredCode: ErrorType;
+  invalidPassword: ErrorType;
+  invalidTokenType: ErrorType;
+  tokenExpired: ErrorType;
+  invalidBearerKey: ErrorType;
+  codeAlreadySent: ErrorType;
+  invalidFileType: ErrorType;
+  uploadFailed: ErrorType;
+  failedGetFile: ErrorType;
+}
+
+export const errors: Errors = {
   serverError: {
     message: "Internal server error.",
     statusCode: 500,
@@ -49,6 +73,18 @@ export const errors = {
   },
   codeAlreadySent: {
     message: "The code has been sent. Please try again later.",
+    statusCode: 400,
+  },
+  invalidFileType: {
+    message: "Invalid file type.",
+    statusCode: 409,
+  },
+  uploadFailed: {
+    message: "File upload failed",
+    statusCode: 400,
+  },
+  failedGetFile: {
+    message: "Failed to get to file",
     statusCode: 400,
   },
 };

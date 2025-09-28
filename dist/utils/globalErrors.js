@@ -54,4 +54,16 @@ exports.errors = {
         message: "The code has been sent. Please try again later.",
         statusCode: 400,
     },
+    invalidFileType: {
+        message: "Invalid file type.",
+        statusCode: 409,
+    },
+    uploadFailed: {
+        message: "File upload failed",
+        statusCode: 400,
+    },
+    failedGetFile: {
+        message: "Failed to get to file",
+        statusCode: 400,
+    },
 };

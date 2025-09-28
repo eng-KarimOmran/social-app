@@ -9,6 +9,7 @@ export interface IUser extends Document {
   password: string;
   emailConfirmed: boolean;
   lastSensitiveUpdate: Date;
+  profileImage: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -39,6 +40,9 @@ const userSchema = new Schema<IUser>(
     lastSensitiveUpdate: {
       type: Date,
       default: new Date(Date.now()),
+    },
+    profileImage: {
+      type: String,
     },
   },
   {

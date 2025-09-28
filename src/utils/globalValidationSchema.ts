@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { TypesFile } from "./upload/multer";
 
 export const user = {
   firstName: z.string().min(2).max(15).trim(),
@@ -13,3 +14,10 @@ export const user = {
 };
 
 export const otp = z.string().length(6);
+
+export const uploadFile = {
+  image: z.object({
+    contentType: z.enum(TypesFile.image),
+    originalname: z.string().min(4),
+  }),
+};

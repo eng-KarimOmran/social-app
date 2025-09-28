@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.upload = exports.TypesFile = exports.StoreIn = void 0;
 const multer_1 = __importDefault(require("multer"));
-const Error_1 = require("./Error");
-const globalErrors_1 = require("./globalErrors");
+const Error_1 = require("../Error");
+const globalErrors_1 = require("../globalErrors");
 var StoreIn;
 (function (StoreIn) {
     StoreIn["memory"] = "memory";
@@ -15,7 +15,7 @@ var StoreIn;
 exports.TypesFile = {
     image: ["image/jpeg", "image/png", "image/jpg"],
 };
-const upload = ({ type, storeIn, }) => {
+const upload = ({ type = exports.TypesFile.image, storeIn = StoreIn.memory, }) => {
     const storage = storeIn === StoreIn.memory
         ? multer_1.default.memoryStorage()
         : multer_1.default.diskStorage({});
@@ -25,6 +25,10 @@ const upload = ({ type, storeIn, }) => {
         }
         cb(null, true);
     };
-    return (0, multer_1.default)({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+    return (0, multer_1.default)({
+        storage,
+        fileFilter,
+        limits: { fileSize: storeIn && StoreIn.memory && 5 * 1024 ** 2 },
+    });
 };
 exports.upload = upload;

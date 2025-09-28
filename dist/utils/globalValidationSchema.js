@@ -33,8 +33,9 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.otp = exports.user = void 0;
+exports.uploadFile = exports.otp = exports.user = void 0;
 const z = __importStar(require("zod"));
+const multer_1 = require("./upload/multer");
 exports.user = {
     firstName: z.string().min(2).max(15).trim(),
     lastName: z.string().min(2).max(15).trim(),
@@ -47,3 +48,9 @@ exports.user = {
     password: z.string().min(8).max(16),
 };
 exports.otp = z.string().length(6);
+exports.uploadFile = {
+    image: z.object({
+        contentType: z.enum(multer_1.TypesFile.image),
+        originalname: z.string().min(4),
+    }),
+};
