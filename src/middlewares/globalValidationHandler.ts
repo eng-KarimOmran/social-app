@@ -10,7 +10,6 @@ const validation = (schema: ZodType) => {
       ...req.query,
     };
     const result = schema.safeParse(data);
-
     if (!result.success) {
       const errors = result.error.issues.map(
         (err) => `${err.path} => ${err.message}`

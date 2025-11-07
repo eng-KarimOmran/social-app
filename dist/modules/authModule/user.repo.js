@@ -12,10 +12,10 @@ class UserRepo extends DBRepo_1.DBRepo {
         this.userModel = userModel;
     }
     findByEmail = async (email) => {
-        const user = await this.userModel.findOne({ email });
-        if (!user) {
-            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
-        }
+        const user = await this.userModel.findOne({
+            email,
+            paranoid: false,
+        });
         return user;
     };
     findUserById = async (id) => {

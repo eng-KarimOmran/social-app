@@ -13,4 +13,5 @@ const userRouter = (0, express_1.Router)();
 const userServices = new user_service_1.UserServices();
 userRouter.use((0, auth_middleware_1.auth)(token_1.TokenType.AccessToken));
 userRouter.patch("/profile-image", (0, globalValidationHandler_1.default)(user_validation_1.profileImage), userServices.profileImage);
+userRouter.delete("/delete-account", userServices.softDeleteAccount);
 exports.default = userRouter;

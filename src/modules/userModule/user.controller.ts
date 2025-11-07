@@ -16,4 +16,5 @@ userRouter.patch(
   userServices.profileImage
 );
 
+userRouter.delete("/delete-account", userServices.softDeleteAccount);
 export default userRouter;

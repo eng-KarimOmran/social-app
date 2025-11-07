@@ -8,14 +8,11 @@ export class UserRepo extends DBRepo<IUser> {
   constructor(private readonly userModel: Model<IUser> = UserModel) {
     super(userModel);
   }
-  findByEmail = async (email: string): Promise<IUser> => {
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new CustomError(
-        errors.userNotFound.message,
-        errors.userNotFound.statusCode
-      );
-    }
+  findByEmail = async (email: string): Promise<IUser | null> => {
+    const user = await this.userModel.findOne({
+      email,
+      paranoid: false,
+    });
     return user;
   };
   findUserById = async (id: Types.ObjectId): Promise<IUser> => {

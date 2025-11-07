@@ -44,6 +44,12 @@ export const auth = (type: TokenType) => {
     }
 
     const user = await userModel.findUserById(payload.userId);
+    if (!user) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     const issuedAtDate = new Date(payload.iat * 1000);
     if (issuedAtDate < user.lastSensitiveUpdate) {
       throw new CustomError(

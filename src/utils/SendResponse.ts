@@ -2,15 +2,15 @@ import { Response } from "express";
 
 interface ISendResponse {
   res: Response;
-  status: number;
-  message: string;
+  status?: number;
+  message?: string;
   data?: {};
 }
 
 const sendResponse = ({
   res,
-  status,
-  message,
+  status = 200,
+  message = "done",
   data = {},
 }: ISendResponse): Response => {
   return res.status(status).json({

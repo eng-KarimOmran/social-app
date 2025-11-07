@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve("./src/config/.env") });
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import baseRouter from "../routes";
 import globalErrorHandler from "../middlewares/globalErrorHandler";
 import { connectDB } from "../db/db.connect";
@@ -9,10 +9,10 @@ const app = express();
 export const bootstrap = async () => {
   await connectDB();
   app.use(express.json());
-  app.use("/api/v1/", baseRouter);
+  app.use("/api/v1", baseRouter);
 
-  app.get("/", (req: Request, res: Response, next: NextFunction): Response => {
-    return res.status(200).json({ message: "Welcome to the server" });
+  app.get("/", (req: Request, res: Response): Response => {
+    return res.status(200).json("hWelcome server");
   });
 
   app.use(globalErrorHandler);

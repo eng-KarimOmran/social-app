@@ -20,6 +20,12 @@ interface Errors {
   invalidFileType: ErrorType;
   uploadFailed: ErrorType;
   failedGetFile: ErrorType;
+  postNotFound: ErrorType;
+  userAlreadyFriend: ErrorType;
+  reqAlreadyFriend: ErrorType;
+  friendRequestNotFound: ErrorType;
+  friendRequestYourself: ErrorType;
+  notFriends: ErrorType;
 }
 
 export const errors: Errors = {
@@ -86,5 +92,29 @@ export const errors: Errors = {
   failedGetFile: {
     message: "Failed to get to file",
     statusCode: 400,
+  },
+  postNotFound: {
+    message: "Post not found.",
+    statusCode: 404,
+  },
+  userAlreadyFriend: {
+    message: "This user is already your friend.",
+    statusCode: 400,
+  },
+  reqAlreadyFriend: {
+    message: "A friend request has already been sent.",
+    statusCode: 400,
+  },
+  friendRequestNotFound: {
+    message: "Friend request not found.",
+    statusCode: 404,
+  },
+  friendRequestYourself: {
+    message: "You cannot send a friend request to yourself",
+    statusCode: 400,
+  },
+  notFriends: {
+    message: "You are not friends",
+    statusCode: 404,
   },
 };

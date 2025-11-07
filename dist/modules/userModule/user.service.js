@@ -27,5 +27,14 @@ class UserServices {
             data: { url },
         });
     };
+    softDeleteAccount = async (req, res) => {
+        const user = req.user;
+        this.userModel.softDelete(user?._id);
+        return (0, SendResponse_1.default)({
+            res,
+            message: "Secure deletion. If you do not log in to your account for 30 days, it will be permanently deleted.",
+            status: 200,
+        });
+    };
 }
 exports.UserServices = UserServices;

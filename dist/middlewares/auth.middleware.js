@@ -26,6 +26,9 @@ const auth = (type) => {
             throw new Error_1.CustomError(globalErrors_js_1.errors.invalidToken.message, globalErrors_js_1.errors.invalidToken.statusCode);
         }
         const user = await userModel.findUserById(payload.userId);
+        if (!user) {
+            throw new Error_1.CustomError(globalErrors_js_1.errors.userNotFound.message, globalErrors_js_1.errors.userNotFound.statusCode);
+        }
         const issuedAtDate = new Date(payload.iat * 1000);
         if (issuedAtDate < user.lastSensitiveUpdate) {
             throw new Error_1.CustomError(globalErrors_js_1.errors.invalidToken.message, globalErrors_js_1.errors.invalidToken.statusCode);

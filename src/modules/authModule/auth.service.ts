@@ -38,21 +38,20 @@ class AuthServices implements IAuthServices {
   private userModel = new UserRepo();
   private otpModel = new OtpRepo();
   private invalidTokenModel = new InvalidTokenRepo();
-
+  
   constructor() {}
   signup = async (req: Request, res: Response): Promise<Response> => {
     const { firstName, lastName, email, phone, password }: Signup = req.body;
-    const userExists = await this.userModel.findOne({ filter: { email } });
+    const userExists = await this.userModel.findByEmail(email);
     if (userExists) {
       throw new CustomError(
         errors.userAlreadyExists.message,
         errors.userAlreadyExists.statusCode
       );
     }
-    const passwordHash = await hash(password);
 
     const user = await this.userModel.create({
-      data: { firstName, lastName, email, phone, password: passwordHash },
+      data: { firstName, lastName, email, phone, password },
     });
 
     const otp = createCode();
@@ -98,9 +97,13 @@ class AuthServices implements IAuthServices {
 
   confirmEmail = async (req: Request, res: Response): Promise<Response> => {
     const { email, otp }: ConfirmEmail = req.body;
-
     const userExists = await this.userModel.findByEmail(email);
-
+    if (!userExists) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     const otpExists = await this.otpModel.findOne({
       filter: { email, typeOtp: OtpType.confirmedEmail },
     });
@@ -149,7 +152,12 @@ class AuthServices implements IAuthServices {
   ): Promise<Response> => {
     const { email }: ResendConfirmEmailCode = req.body;
     const userExists = await this.userModel.findByEmail(email);
-
+    if (!userExists) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     if (userExists.emailConfirmed) {
       throw new CustomError(
         errors.emailAlreadyConfirmed.message,
@@ -199,7 +207,12 @@ class AuthServices implements IAuthServices {
   login = async (req: Request, res: Response): Promise<Response> => {
     const { email, password }: Login = req.body;
     const userExists = await this.userModel.findByEmail(email);
-
+    if (!userExists) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     const isMatch = await compare(password, userExists.password);
 
     if (!isMatch) {
@@ -222,6 +235,9 @@ class AuthServices implements IAuthServices {
       { userId: userExists._id },
       jwtid
     );
+
+    userExists.deleteAt = null;
+    await userExists.save();
     return sendResponse({
       res,
       message: "Done",
@@ -256,7 +272,12 @@ class AuthServices implements IAuthServices {
   forgotPassword = async (req: Request, res: Response): Promise<Response> => {
     const { email }: ForgotPassword = req.body;
     const userExists = await this.userModel.findByEmail(email);
-
+    if (!userExists) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     const otpExists = await this.otpModel.findOne({
       filter: { email, typeOtp: OtpType.ResetPassword },
     });
@@ -307,6 +328,12 @@ class AuthServices implements IAuthServices {
   ): Promise<Response> => {
     const { email, otp }: VerifyPasswordResetCode = req.body;
     const userExists = await this.userModel.findByEmail(email);
+    if (!userExists) {
+      throw new CustomError(
+        errors.userNotFound.message,
+        errors.userNotFound.statusCode
+      );
+    }
     const otpExists = await this.otpModel.findOne({
       filter: { email, typeOtp: OtpType.ResetPassword },
     });
@@ -358,9 +385,7 @@ class AuthServices implements IAuthServices {
     const user = req.user as IUser;
     const exp = new Date(Date.now() + 1000 * 60 * 15);
     await this.invalidTokenModel.create({ data: { jti, exp } });
-    const passwordHash = await hash(password);
-    user.password = passwordHash;
-    user.lastSensitiveUpdate = new Date(Date.now());
+    user.password = password;
     await user.save();
     return sendResponse({
       res,

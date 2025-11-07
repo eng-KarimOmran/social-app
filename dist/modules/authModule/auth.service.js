@@ -22,13 +22,12 @@ class AuthServices {
     constructor() { }
     signup = async (req, res) => {
         const { firstName, lastName, email, phone, password } = req.body;
-        const userExists = await this.userModel.findOne({ filter: { email } });
+        const userExists = await this.userModel.findByEmail(email);
         if (userExists) {
             throw new Error_1.CustomError(globalErrors_1.errors.userAlreadyExists.message, globalErrors_1.errors.userAlreadyExists.statusCode);
         }
-        const passwordHash = await (0, Encryption_1.hash)(password);
         const user = await this.userModel.create({
-            data: { firstName, lastName, email, phone, password: passwordHash },
+            data: { firstName, lastName, email, phone, password },
         });
         const otp = (0, createCode_1.createCode)();
         const otpHash = await (0, Encryption_1.hash)(otp);
@@ -59,6 +58,9 @@ class AuthServices {
     confirmEmail = async (req, res) => {
         const { email, otp } = req.body;
         const userExists = await this.userModel.findByEmail(email);
+        if (!userExists) {
+            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
+        }
         const otpExists = await this.otpModel.findOne({
             filter: { email, typeOtp: otpModel_1.OtpType.confirmedEmail },
         });
@@ -86,6 +88,9 @@ class AuthServices {
     resendConfirmEmailCode = async (req, res) => {
         const { email } = req.body;
         const userExists = await this.userModel.findByEmail(email);
+        if (!userExists) {
+            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
+        }
         if (userExists.emailConfirmed) {
             throw new Error_1.CustomError(globalErrors_1.errors.emailAlreadyConfirmed.message, globalErrors_1.errors.emailAlreadyConfirmed.statusCode);
         }
@@ -118,6 +123,9 @@ class AuthServices {
     login = async (req, res) => {
         const { email, password } = req.body;
         const userExists = await this.userModel.findByEmail(email);
+        if (!userExists) {
+            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
+        }
         const isMatch = await (0, Encryption_1.compare)(password, userExists.password);
         if (!isMatch) {
             throw new Error_1.CustomError(globalErrors_1.errors.invalidPassword.message, globalErrors_1.errors.invalidPassword.statusCode);
@@ -125,6 +133,8 @@ class AuthServices {
         const jwtid = (0, nanoid_1.nanoid)();
         const accessToken = (0, token_1.createToken)(token_1.TokenType.AccessToken, { userId: userExists._id }, jwtid);
         const refreshToken = (0, token_1.createToken)(token_1.TokenType.RefreshToken, { userId: userExists._id }, jwtid);
+        userExists.deleteAt = null;
+        await userExists.save();
         return (0, SendResponse_1.default)({
             res,
             message: "Done",
@@ -156,6 +166,9 @@ class AuthServices {
     forgotPassword = async (req, res) => {
         const { email } = req.body;
         const userExists = await this.userModel.findByEmail(email);
+        if (!userExists) {
+            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
+        }
         const otpExists = await this.otpModel.findOne({
             filter: { email, typeOtp: otpModel_1.OtpType.ResetPassword },
         });
@@ -193,6 +206,9 @@ class AuthServices {
     verifyPasswordResetCode = async (req, res) => {
         const { email, otp } = req.body;
         const userExists = await this.userModel.findByEmail(email);
+        if (!userExists) {
+            throw new Error_1.CustomError(globalErrors_1.errors.userNotFound.message, globalErrors_1.errors.userNotFound.statusCode);
+        }
         const otpExists = await this.otpModel.findOne({
             filter: { email, typeOtp: otpModel_1.OtpType.ResetPassword },
         });
@@ -223,9 +239,7 @@ class AuthServices {
         const user = req.user;
         const exp = new Date(Date.now() + 1000 * 60 * 15);
         await this.invalidTokenModel.create({ data: { jti, exp } });
-        const passwordHash = await (0, Encryption_1.hash)(password);
-        user.password = passwordHash;
-        user.lastSensitiveUpdate = new Date(Date.now());
+        user.password = password;
         await user.save();
         return (0, SendResponse_1.default)({
             res,

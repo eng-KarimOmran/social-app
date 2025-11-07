@@ -15,9 +15,9 @@ const app = (0, express_1.default)();
 const bootstrap = async () => {
     await (0, db_connect_1.connectDB)();
     app.use(express_1.default.json());
-    app.use("/api/v1/", routes_1.default);
-    app.get("/", (req, res, next) => {
-        return res.status(200).json({ message: "Welcome to the server" });
+    app.use("/api/v1", routes_1.default);
+    app.get("/", (req, res) => {
+        return res.status(200).json("hWelcome server");
     });
     app.use(globalErrorHandler_1.default);
     const port = process.env.PORT;

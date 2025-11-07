@@ -33,9 +33,10 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadFile = exports.otp = exports.user = void 0;
+exports.likeType = exports.ObjectId = exports.uploadFile = exports.otp = exports.user = void 0;
 const z = __importStar(require("zod"));
 const multer_1 = require("./upload/multer");
+const post_type_1 = require("../modules/postModule/post.type");
 exports.user = {
     firstName: z.string().min(2).max(15).trim(),
     lastName: z.string().min(2).max(15).trim(),
@@ -54,3 +55,7 @@ exports.uploadFile = {
         originalname: z.string().min(4),
     }),
 };
+exports.ObjectId = z
+    .string()
+    .regex(/^[a-f0-9]{24}$/, { message: "Invalid Id" });
+exports.likeType = z.enum(Object.values(post_type_1.LikeType));

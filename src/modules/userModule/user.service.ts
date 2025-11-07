@@ -3,10 +3,12 @@ import { UserRepo } from "../authModule/user.repo";
 import { IUser } from "../../db/models/userModel";
 import { IRequest } from "../../middlewares/auth.middleware";
 import sendResponse from "../../utils/SendResponse";
-import { ceratePreSignedUrl, deleteFile } from "../../utils/upload/s3.Service";
+import { ceratePreSignedUrl } from "../../utils/upload/s3.Service";
+import { Types } from "mongoose";
 
 interface IUserServices {
   profileImage(req: IRequest, res: Response): Promise<Response>;
+  softDeleteAccount(req: IRequest, res: Response): Promise<Response>;
 }
 
 export class UserServices implements IUserServices {
@@ -30,6 +32,19 @@ export class UserServices implements IUserServices {
       message: "The image has been uploaded successfully",
       status: 200,
       data: { url },
+    });
+  };
+  softDeleteAccount = async (
+    req: IRequest,
+    res: Response
+  ): Promise<Response> => {
+    const user = req.user
+    this.userModel.softDelete(user?._id as Types.ObjectId)
+    return sendResponse({
+      res,
+      message:
+        "Secure deletion. If you do not log in to your account for 30 days, it will be permanently deleted.",
+      status: 200,
     });
   };
 }

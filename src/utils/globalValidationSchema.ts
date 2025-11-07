@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { TypesFile } from "./upload/multer";
+import { LikeType } from "../modules/postModule/post.type";
 
 export const user = {
   firstName: z.string().min(2).max(15).trim(),
@@ -21,3 +22,9 @@ export const uploadFile = {
     originalname: z.string().min(4),
   }),
 };
+
+export const ObjectId = z
+  .string()
+  .regex(/^[a-f0-9]{24}$/, { message: "Invalid Id" });
+
+export const likeType = z.enum(Object.values(LikeType));
